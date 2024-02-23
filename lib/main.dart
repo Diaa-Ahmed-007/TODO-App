@@ -1,12 +1,15 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/firebase_options.dart';
+import 'package:todo/layout/Home/screens/home_screen.dart';
 import 'package:todo/layout/login/login_screen.dart';
 import 'package:todo/layout/register/register_screen.dart';
+import 'package:todo/layout/splash/splash_screen.dart';
+import 'package:todo/style/theme.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -18,11 +21,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       routes: {
+        SplashScreen.routeName: (context) => const SplashScreen(),
         LoginScreen.routeName: (context) => LoginScreen(),
         RegisterScreen.routeName: (context) => RegisterScreen(),
+        HomeScreen.routeName: (context) => const HomeScreen(),
       },
-      initialRoute: LoginScreen.routeName,
+      theme: AppTheme.lightTheme,
+      initialRoute: SplashScreen.routeName,
     );
   }
 }

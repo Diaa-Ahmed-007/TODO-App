@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/layout/Home/screens/home_screen.dart';
 import 'package:todo/layout/register/register_screen.dart';
 import 'package:todo/shared/constants.dart';
 import 'package:todo/shared/reusable_componenets/custom_Text_Field.dart';
@@ -61,13 +62,17 @@ class LoginScreen extends StatelessWidget {
                 },
                 controller: passController,
               ),
-             
-              CustomSignInButton(ontap: () {
-                  if (formstate.currentState!.validate()) {
-                    String name = emailController.text.trim();
-                    String phone = passController.text.trim();
-                  }
-              }, lapel: 'Login',),
+              CustomSignInButton(
+                ontap: () {
+                  // if (formstate.currentState!.validate()) {
+                  //   String name = emailController.text.trim();
+                  //   String phone = passController.text.trim();
+                  // }
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, HomeScreen.routeName, (route) => false);
+                },
+                lapel: 'Login',
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -79,9 +84,9 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushNamed(context, RegisterScreen.routeName);
                     },
-                    child: const Text(
+                    child: Text(
                       "Sign Up",
-                      style: TextStyle(color: Color(0xff2B73A4)),
+                      style: Theme.of(context).textTheme.bodySmall,
                     ),
                   )
                 ],

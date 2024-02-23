@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:todo/shared/constants.dart';
 import 'package:todo/shared/reusable_componenets/custom_Text_Field.dart';
@@ -22,10 +23,10 @@ class RegisterScreen extends StatelessWidget {
         ),
       ),
       child: Scaffold(
-        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.white),
+          automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
           title: const Text(
             'Register',
@@ -35,9 +36,12 @@ class RegisterScreen extends StatelessWidget {
         ),
         body: Form(
           key: formstate,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: ListView(
+            physics: const BouncingScrollPhysics(),
             children: [
+              const SizedBox(
+                height: 160,
+              ),
               CustomTextField(
                 labelWord: 'First Name',
                 controller: firstName,
@@ -98,10 +102,19 @@ class RegisterScreen extends StatelessWidget {
                 },
               ),
               CustomSignInButton(
-                  ontap: () {
+                  ontap: () async {
                     if (formstate.currentState!.validate()) {
-                      String name = emailController.text.trim();
-                      String phone = passController.text.trim();
+                      try {
+                        await registerUser(emailController, passController);
+                        Navigator.pop(context);
+                      } on FirebaseAuthException catch (e) {
+                        if (e.code == 'email-already-in-use') {
+                          showSnackBar(context, 'email already exist');
+                        } else {
+                          showSnackBar(context, e.code);
+                        }
+                      }
+                      showSnackBar(context, 'success');
                     }
                   },
                   lapel: 'Register'),
@@ -116,10 +129,8 @@ class RegisterScreen extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: const Text(
-                      "Sign In",
-                      style: TextStyle(color: Color(0xff2B73A4)),
-                    ),
+                    child: Text("Sign In",
+                        style: Theme.of(context).textTheme.bodySmall),
                   )
                 ],
               ),
@@ -128,5 +139,24 @@ class RegisterScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void showSnackBar(BuildContext context, String massage) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+          duration: const Duration(seconds: 2),
+          content: Center(
+            child: Text(
+              massage,
+              style: const TextStyle(color: Colors.white),
+            ),
+          )),
+    );
+  }
+
+  Future registerUser(TextEditingController emailController,
+      TextEditingController passController) async {
+    await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: emailController.text, password: passController.text);
   }
 }
