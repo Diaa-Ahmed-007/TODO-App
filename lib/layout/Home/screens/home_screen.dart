@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo/models/user_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,12 +13,14 @@ class _HomeScreenState extends State<HomeScreen> {
   int index = 0;
   @override
   Widget build(BuildContext context) {
+    final UserModel user =
+        ModalRoute.of(context)!.settings.arguments as UserModel;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         toolbarHeight: 170,
         title: Text(
-          'To Do List',
+          'Hello ${user.fullName ?? 'user'}',
           style: Theme.of(context).textTheme.labelLarge,
         ),
       ),

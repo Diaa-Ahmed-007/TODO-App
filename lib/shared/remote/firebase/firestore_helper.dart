@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:todo/models/user_model.dart';
 
 class FirestoreHelper {
-  CollectionReference<UserModel> getUserCollection() {
+  static CollectionReference<UserModel> getUserCollection() {
     var reference = FirebaseFirestore.instance.collection("User").withConverter(
       fromFirestore: (snapshot, options) {
         return UserModel.fromFirestore(snapshot, options);
@@ -14,7 +14,7 @@ class FirestoreHelper {
     return reference;
   }
 
-  addUser(
+  static Future<void> addUser(
       {required String userId,
       required String email,
       required String fullName}) async {
@@ -23,7 +23,7 @@ class FirestoreHelper {
         .set(UserModel(userID: userId, email: email, fullName: fullName));
   }
 
-  Future<UserModel?> getUser({required String UserID}) async {
+  static Future<UserModel?> getUser({required String UserID}) async {
     var document = getUserCollection().doc(UserID);
     var snapshot = await document.get();
     UserModel? userData = snapshot.data();
