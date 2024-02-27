@@ -1,20 +1,37 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:todo/layout/login/provider/visability_login_provider.dart';
 import 'package:todo/shared/constants.dart';
+import 'package:todo/shared/firebaseautherrormassage.dart';
 import 'package:todo/shared/reusable_componenets/custom_Text_Field.dart';
 import 'package:todo/shared/reusable_componenets/custom_sign_in_button.dart';
 
-class RegisterScreen extends StatelessWidget {
-  RegisterScreen({super.key});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
   static const routeName = 'registerScreen';
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController firstName = TextEditingController();
+
   final TextEditingController lastName = TextEditingController();
+
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passController = TextEditingController();
+
   final TextEditingController confirmPassController = TextEditingController();
+
   final formstate = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
+    VisabilityLoginProvider provider =
+        Provider.of<VisabilityLoginProvider>(context);
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -51,6 +68,7 @@ class RegisterScreen extends StatelessWidget {
                   }
                   return null;
                 },
+                passwordVisible: false,
               ),
               CustomTextField(
                 labelWord: 'last Name',
@@ -61,6 +79,7 @@ class RegisterScreen extends StatelessWidget {
                   }
                   return null;
                 },
+                passwordVisible: false,
               ),
               CustomTextField(
                 labelWord: 'Email',
@@ -74,8 +93,18 @@ class RegisterScreen extends StatelessWidget {
                   return null;
                 },
                 controller: emailController,
+                passwordVisible: false,
               ),
               CustomTextField(
+                iconbuttoneye: IconButton(
+                  onPressed: () {
+                    provider.changeRegisterVisible(
+                        provider.getRegisterPassVisible() ? false : true);
+                  },
+                  icon: provider.getRegisterPassVisible()
+                      ? const Icon(Icons.visibility_off)
+                      : const Icon(Icons.visibility),
+                ),
                 labelWord: 'password',
                 val: (value) {
                   if (value == null || value.isEmpty) {
@@ -87,6 +116,7 @@ class RegisterScreen extends StatelessWidget {
                   return null;
                 },
                 controller: passController,
+                passwordVisible: provider.getRegisterPassVisible(),
               ),
               CustomTextField(
                 labelWord: 'confirm passworsd',
@@ -100,6 +130,15 @@ class RegisterScreen extends StatelessWidget {
                   }
                   return null;
                 },
+                passwordVisible: provider.getPasswordCheakedVisible(),
+                iconbuttoneye: IconButton(
+                    onPressed: () {
+                      provider.changePasswordCheakedVisible(
+                          provider.getPasswordCheakedVisible() ? false : true);
+                    },
+                    icon: provider.getPasswordCheakedVisible()
+                        ? const Icon(Icons.visibility_off)
+                        : const Icon(Icons.visibility)),
               ),
               CustomSignInButton(
                   ontap: () async {
@@ -109,12 +148,14 @@ class RegisterScreen extends StatelessWidget {
                         Navigator.pop(context);
                       } on FirebaseAuthException catch (e) {
                         if (e.code == 'email-already-in-use') {
-                          showSnackBar(context, 'email already exist');
+                          FireBaseAuthErrorMassage.showSnackBar(
+                              context, 'email already exist');
                         } else {
-                          showSnackBar(context, e.code);
+                          FireBaseAuthErrorMassage.showSnackBar(
+                              context, e.code);
                         }
                       }
-                      showSnackBar(context, 'success');
+                      FireBaseAuthErrorMassage.showSnackBar(context, 'success');
                     }
                   },
                   lapel: 'Register'),
@@ -138,19 +179,6 @@ class RegisterScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void showSnackBar(BuildContext context, String massage) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-          duration: const Duration(seconds: 2),
-          content: Center(
-            child: Text(
-              massage,
-              style: const TextStyle(color: Colors.white),
-            ),
-          )),
     );
   }
 

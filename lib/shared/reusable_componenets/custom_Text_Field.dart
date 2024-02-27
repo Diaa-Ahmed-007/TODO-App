@@ -5,11 +5,13 @@ class CustomTextField extends StatelessWidget {
     required this.labelWord,
     super.key,
     required this.controller,
-    required this.val,
+    required this.val, this.iconbuttoneye, required this.passwordVisible,
   });
   final String labelWord;
   final TextEditingController controller;
   final String? Function(String?) val;
+  final Widget? iconbuttoneye;
+  final bool passwordVisible;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -19,8 +21,12 @@ class CustomTextField extends StatelessWidget {
         controller: controller,
         cursorColor: Colors.black,
         style: const TextStyle(color: Colors.black),
+        obscureText: passwordVisible,
         decoration: InputDecoration(
+            suffixIcon: iconbuttoneye,
+            
             hintText: labelWord,
+        
             hintStyle: const TextStyle(color: Color(0xff2B73A4)),
             hintMaxLines: 1,
             enabledBorder: OutlineInputBorder(
