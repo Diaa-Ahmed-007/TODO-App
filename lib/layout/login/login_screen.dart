@@ -115,9 +115,8 @@ class LoginScreen extends StatelessWidget {
 
   void logIn(BuildContext context) async {
     try {
-      UserCredential credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(
-              email: emailController.text, password: passController.text);
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passController.text);
       Navigator.pushNamedAndRemoveUntil(
           context, HomeScreen.routeName, (route) => false);
     } on FirebaseAuthException catch (e) {
