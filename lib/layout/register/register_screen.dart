@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo/layout/login/provider/visability_login_provider.dart';
 import 'package:todo/shared/constants.dart';
 import 'package:todo/shared/firebaseautherrormassage.dart';
+import 'package:todo/shared/remote/firebase/firestore_helper.dart';
 import 'package:todo/shared/reusable_componenets/custom_Text_Field.dart';
 import 'package:todo/shared/reusable_componenets/custom_sign_in_button.dart';
 
@@ -16,9 +17,7 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController firstName = TextEditingController();
-
-  final TextEditingController lastName = TextEditingController();
+  final TextEditingController fullName = TextEditingController();
 
   final TextEditingController emailController = TextEditingController();
 
@@ -30,8 +29,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    VisabilityLoginProvider provider =
-        Provider.of<VisabilityLoginProvider>(context);
+    VisabilityPasswordProvider provider =
+        Provider.of<VisabilityPasswordProvider>(context);
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -61,18 +60,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               CustomTextField(
                 labelWord: 'First Name',
-                controller: firstName,
-                val: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'this field is required';
-                  }
-                  return null;
-                },
-                passwordVisible: false,
-              ),
-              CustomTextField(
-                labelWord: 'last Name',
-                controller: lastName,
+                controller: fullName,
                 val: (value) {
                   if (value == null || value.isEmpty) {
                     return 'this field is required';
@@ -144,7 +132,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ontap: () async {
                     if (formstate.currentState!.validate()) {
                       try {
-                        await registerUser(emailController, passController);
+                        var user = await FirebaseAuth.instance
+                            .createUserWithEmailAndPassword(
+                                email: emailController.text,
+                                password: passController.text);
+                        FirestoreHelper.addUser(
+                            userId: user.user!.uid,
+                            email: emailController.text,
+                            fullName: fullName.text);
                         Navigator.pop(context);
                       } on FirebaseAuthException catch (e) {
                         if (e.code == 'email-already-in-use') {
@@ -182,9 +177,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Future registerUser(TextEditingController emailController,
-      TextEditingController passController) async {
-    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: emailController.text, password: passController.text);
-  }
+  // Future registerUser(TextEditingController emailController,
+  //     TextEditingController passController) async {
+
+  // }
 }

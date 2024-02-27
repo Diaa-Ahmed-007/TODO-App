@@ -22,8 +22,8 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<VisabilityLoginProvider>(
-      create: (BuildContext context) => VisabilityLoginProvider(),
+    return ChangeNotifierProvider<VisabilityPasswordProvider>(
+      create: (BuildContext context) => VisabilityPasswordProvider(),
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         routes: {

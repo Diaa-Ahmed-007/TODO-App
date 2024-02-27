@@ -1,11 +1,15 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/screens/home_screen.dart';
 import 'package:todo/layout/login/provider/visability_login_provider.dart';
 import 'package:todo/layout/register/register_screen.dart';
+import 'package:todo/models/user_model.dart';
 import 'package:todo/shared/constants.dart';
 import 'package:todo/shared/firebaseautherrormassage.dart';
+import 'package:todo/shared/remote/firebase/firestore_helper.dart';
 import 'package:todo/shared/reusable_componenets/custom_Text_Field.dart';
 import 'package:todo/shared/reusable_componenets/custom_sign_in_button.dart';
 
@@ -21,8 +25,8 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    VisabilityLoginProvider provider =
-        Provider.of<VisabilityLoginProvider>(context);
+    VisabilityPasswordProvider provider =
+        Provider.of<VisabilityPasswordProvider>(context);
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -75,7 +79,7 @@ class LoginScreen extends StatelessWidget {
                     provider.changeVisible(
                         provider.getLoginPassVisible() ? false : true);
                   },
-                  icon: VisabilityLoginProvider().getLoginPassVisible()
+                  icon: VisabilityPasswordProvider().getLoginPassVisible()
                       ? const Icon(Icons.visibility_off)
                       : const Icon(Icons.visibility),
                 ),
@@ -115,10 +119,14 @@ class LoginScreen extends StatelessWidget {
 
   void logIn(BuildContext context) async {
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailController.text, password: passController.text);
+      UserCredential credential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(
+              email: emailController.text, password: passController.text);
+      UserModel? user =
+          await FirestoreHelper.getUser(UserID: credential.user!.uid);
+      log(user!.fullName!);
       Navigator.pushNamedAndRemoveUntil(
-          context, HomeScreen.routeName, (route) => false);
+          context, HomeScreen.routeName, (route) => false,arguments: user);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         FireBaseAuthErrorMassage.showSnackBar(
