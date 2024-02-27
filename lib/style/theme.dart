@@ -3,6 +3,9 @@ import 'package:todo/style/app_color.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        selectedIconTheme: IconThemeData(size: 30),
+        unselectedIconTheme: IconThemeData(size: 30)),
     scaffoldBackgroundColor: AppColor.scondryLight,
     colorScheme: ColorScheme.fromSeed(
         seedColor: AppColor.primaryLight,
@@ -13,7 +16,7 @@ class AppTheme {
           color: AppColor.onprimaryLight,
           fontSize: 22,
           fontWeight: FontWeight.w700),
-    bodySmall:  TextStyle(fontSize: 18, color: Color(0xff2B73A4)),
+      bodySmall: TextStyle(fontSize: 18, color: Color(0xff2B73A4)),
     ),
   );
 }

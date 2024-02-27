@@ -1,18 +1,28 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/screens/home_screen.dart';
+import 'package:todo/layout/login/provider/visability_login_provider.dart';
 import 'package:todo/layout/register/register_screen.dart';
 import 'package:todo/shared/constants.dart';
+import 'package:todo/shared/firebaseautherrormassage.dart';
 import 'package:todo/shared/reusable_componenets/custom_Text_Field.dart';
 import 'package:todo/shared/reusable_componenets/custom_sign_in_button.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
   static const routeName = 'loginScreen';
+
   final TextEditingController emailController = TextEditingController();
+
   final TextEditingController passController = TextEditingController();
+
   final formstate = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
+    VisabilityLoginProvider provider =
+        Provider.of<VisabilityLoginProvider>(context);
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -48,6 +58,7 @@ class LoginScreen extends StatelessWidget {
                   return null;
                 },
                 controller: emailController,
+                passwordVisible: false,
               ),
               CustomTextField(
                 labelWord: 'password',
@@ -55,21 +66,25 @@ class LoginScreen extends StatelessWidget {
                   if (value == null || value.isEmpty) {
                     return 'this field is required';
                   }
-                  if (value.length < 8) {
-                    return "password can't be less than 8";
-                  }
                   return null;
                 },
                 controller: passController,
+                passwordVisible: provider.passwordVisible,
+                iconbuttoneye: IconButton(
+                  onPressed: () {
+                    provider.changeVisible(
+                        provider.getLoginPassVisible() ? false : true);
+                  },
+                  icon: VisabilityLoginProvider().getLoginPassVisible()
+                      ? const Icon(Icons.visibility_off)
+                      : const Icon(Icons.visibility),
+                ),
               ),
               CustomSignInButton(
                 ontap: () {
-                  // if (formstate.currentState!.validate()) {
-                  //   String name = emailController.text.trim();
-                  //   String phone = passController.text.trim();
-                  // }
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, HomeScreen.routeName, (route) => false);
+                  if (formstate.currentState!.validate()) {
+                    logIn(context);
+                  }
                 },
                 lapel: 'Login',
               ),
@@ -96,5 +111,22 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void logIn(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailController.text, password: passController.text);
+      Navigator.pushNamedAndRemoveUntil(
+          context, HomeScreen.routeName, (route) => false);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        FireBaseAuthErrorMassage.showSnackBar(
+            context, 'No user found for that email.');
+      } else if (e.code == 'wrong-password') {
+        FireBaseAuthErrorMassage.showSnackBar(
+            context, 'Wrong password provided for that user.');
+      }
+    }
   }
 }
