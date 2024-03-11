@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:todo/models/task_model.dart';
 import 'package:todo/models/user_model.dart';
 
 class FirestoreHelper {
@@ -28,5 +31,51 @@ class FirestoreHelper {
     var snapshot = await document.get();
     UserModel? userData = snapshot.data();
     return userData;
+  }
+
+  static CollectionReference<TaskModel> getTaskCollection(String userID) {
+    var tasksCollection =
+        getUserCollection().doc(userID).collection("Tasks").withConverter(
+      fromFirestore: (snapshot, options) {
+        return TaskModel.fromFirestore(snapshot.data() ?? {});
+      },
+      toFirestore: (value, options) {
+        return value.toFirestore();
+      },
+    );
+    return tasksCollection;
+  }
+
+  static Future<void> addNewTask(
+      {required TaskModel task, required String userID}) async {
+    var document = getTaskCollection(userID).doc();
+    task.id = document.id;
+    await document.set(task);
+    log(task.toString());
+  }
+
+  // static Future<List<TaskModel>> getTasks({required String UserID}) async {
+  //   var document = await getTaskCollection(UserID).get();
+  //   List<TaskModel> tasks =
+  //       document.docs.map((snapshot) => snapshot.data()).toList();
+  //   return tasks;
+  // }
+
+  static Stream<List<TaskModel>> listenToTasks(
+      {required String UserID, required int date}) async* {
+    Stream<QuerySnapshot<TaskModel>> taskStream =
+        getTaskCollection(UserID).where("date", isEqualTo: date).snapshots();
+    Stream<List<TaskModel>> tasks = taskStream
+        .map((event) => event.docs.map((snapshot) => snapshot.data()).toList());
+    yield* tasks;
+  }
+
+  static Future<void> deleteTask(
+      {required String userID, required String taskID}) async {
+    await getTaskCollection(userID).doc(taskID).delete();
+  }
+
+  static Future<void> updateTasks({required String userID, required String taskID,required TaskModel task}) async {
+    await getTaskCollection(userID).doc(taskID).update(task.toFirestore());
   }
 }

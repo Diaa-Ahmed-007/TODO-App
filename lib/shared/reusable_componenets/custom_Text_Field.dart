@@ -5,7 +5,9 @@ class CustomTextField extends StatelessWidget {
     required this.labelWord,
     super.key,
     required this.controller,
-    required this.val, this.iconbuttoneye, required this.passwordVisible,
+    required this.val,
+    this.iconbuttoneye,
+    required this.passwordVisible,
   });
   final String labelWord;
   final TextEditingController controller;
@@ -24,9 +26,8 @@ class CustomTextField extends StatelessWidget {
         obscureText: passwordVisible,
         decoration: InputDecoration(
             suffixIcon: iconbuttoneye,
-            
+            suffixIconColor: Colors.black54,
             hintText: labelWord,
-        
             hintStyle: const TextStyle(color: Color(0xff2B73A4)),
             hintMaxLines: 1,
             enabledBorder: OutlineInputBorder(

@@ -1,34 +1,31 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/layout/Home/screens/home_screen.dart';
 import 'package:todo/layout/login/provider/visability_login_provider.dart';
+import 'package:todo/models/user_model.dart';
 import 'package:todo/shared/constants.dart';
 import 'package:todo/shared/firebaseautherrormassage.dart';
+import 'package:todo/shared/providers/auth_provider.dart';
 import 'package:todo/shared/remote/firebase/firestore_helper.dart';
 import 'package:todo/shared/reusable_componenets/custom_Text_Field.dart';
 import 'package:todo/shared/reusable_componenets/custom_sign_in_button.dart';
 
-class RegisterScreen extends StatefulWidget {
+class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
   static const routeName = 'registerScreen';
 
   @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController fullName = TextEditingController();
-
-  final TextEditingController emailController = TextEditingController();
-
-  final TextEditingController passController = TextEditingController();
-
-  final TextEditingController confirmPassController = TextEditingController();
-
-  final formstate = GlobalKey<FormState>();
-
-  @override
   Widget build(BuildContext context) {
+    final TextEditingController fullName = TextEditingController();
+
+    final TextEditingController emailController = TextEditingController();
+
+    final TextEditingController passController = TextEditingController();
+
+    final TextEditingController confirmPassController = TextEditingController();
+
+    final formstate = GlobalKey<FormState>();
     VisabilityPasswordProvider provider =
         Provider.of<VisabilityPasswordProvider>(context);
     return Container(
@@ -130,28 +127,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
               CustomSignInButton(
                   ontap: () async {
-                    if (formstate.currentState!.validate()) {
-                      try {
-                        var user = await FirebaseAuth.instance
-                            .createUserWithEmailAndPassword(
-                                email: emailController.text,
-                                password: passController.text);
-                        FirestoreHelper.addUser(
-                            userId: user.user!.uid,
-                            email: emailController.text,
-                            fullName: fullName.text);
-                        Navigator.pop(context);
-                      } on FirebaseAuthException catch (e) {
-                        if (e.code == 'email-already-in-use') {
-                          FireBaseAuthErrorMassage.showSnackBar(
-                              context, 'email already exist');
-                        } else {
-                          FireBaseAuthErrorMassage.showSnackBar(
-                              context, e.code);
-                        }
-                      }
-                      FireBaseAuthErrorMassage.showSnackBar(context, 'success');
-                    }
+                    await newRegister(
+                        context: context,
+                        emailController: emailController,
+                        passController: passController,
+                        fullName: fullName,
+                        formstate: formstate);
                   },
                   lapel: 'Register'),
               Row(
@@ -177,8 +158,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  // Future registerUser(TextEditingController emailController,
-  //     TextEditingController passController) async {
-
-  // }
+  Future<void> newRegister(
+      {context, emailController, passController, formstate, fullName}) async {
+    MyAuthProvider provider =
+        Provider.of<MyAuthProvider>(context, listen: false);
+    if (formstate.currentState!.validate()) {
+      try {
+        var user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: emailController.text, password: passController.text);
+        await FirestoreHelper.addUser(
+            userId: user.user!.uid,
+            email: emailController.text,
+            fullName: fullName.text);
+        provider.setUsers(
+            user.user,
+            UserModel(
+                userID: user.user!.uid,
+                email: emailController.text,
+                fullName: fullName.text));
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          HomeScreen.routeName,
+          (route) => false,
+        );
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'email-already-in-use') {
+          FireBaseAuthErrorMassage.showSnackBar(context, 'email already exist');
+        } else {
+          FireBaseAuthErrorMassage.showSnackBar(context, e.code);
+        }
+      }
+      FireBaseAuthErrorMassage.showSnackBar(context, 'success');
+    }
+  }
 }
