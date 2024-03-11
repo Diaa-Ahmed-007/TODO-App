@@ -1,71 +1,120 @@
 import 'package:flutter/material.dart';
-import 'package:todo/models/user_model.dart';
+import 'package:provider/provider.dart';
+import 'package:todo/layout/Home/provider/home_provider.dart';
+import 'package:todo/layout/Home/screens/tabs_screens/list_tab.dart';
+import 'package:todo/layout/Home/screens/tabs_screens/settings_tab.dart';
+import 'package:todo/layout/Home/widgets/add_task_sheet.dart';
+import 'package:todo/models/task_model.dart';
+import 'package:todo/shared/providers/auth_provider.dart';
+import 'package:todo/shared/remote/firebase/firestore_helper.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+// ignore: must_be_immutable
+class HomeScreen extends StatelessWidget {
   static const routeName = "HomeScreen";
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
+  HomeScreen({super.key});
 
-class _HomeScreenState extends State<HomeScreen> {
-  int index = 0;
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  GlobalKey<FormState> globalKey = GlobalKey();
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descController = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    final UserModel user =
-        ModalRoute.of(context)!.settings.arguments as UserModel;
+    bool isKeyboardOpened = MediaQuery.of(context).viewInsets.bottom != 0;
+    List<Widget> tabsList = [const ListTab(), const SettingsTab()];
+
+    HomeProvider homeProvider = Provider.of<HomeProvider>(context);
+    MyAuthProvider provider = Provider.of<MyAuthProvider>(context);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        toolbarHeight: 170,
-        title: Text(
-          'Hello ${user.fullName ?? 'user'}',
-          style: Theme.of(context).textTheme.labelLarge,
+      extendBody: true,
+      body: Scaffold(
+        key: scaffoldKey,
+        body: tabsList[homeProvider.currentNavIndex],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        clipBehavior: Clip.hardEdge,
+        color: Colors.transparent,
+        elevation: 0,
+        shape: const CircularNotchedRectangle(),
+        notchMargin: 10,
+        child: BottomNavigationBar(
+          elevation: 10,
+          backgroundColor: Theme.of(context).colorScheme.onPrimary,
+          currentIndex: homeProvider.currentNavIndex,
+          onTap: (value) {
+            homeProvider.changeTab(value);
+          },
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.list),
+              label: "Notes List",
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.settings_outlined),
+              label: "settings",
+            )
+          ],
         ),
-      ),
-      body: const Column(
-        children: [],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        landscapeLayout: BottomNavigationBarLandscapeLayout.centered,
-        backgroundColor: Theme.of(context).colorScheme.onPrimary,
-        currentIndex: index,
-        onTap: (value) {
-          setState(() {
-            index = value;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.list),
-            label: "Notes List",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            label: "settings",
-          )
-        ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: Container(
-        margin: const EdgeInsets.all(16),
-        height: 64,
-        width: 64,
-        child: FloatingActionButton(
-          onPressed: () {},
-          elevation: 0,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(
-                  width: 3, color: Theme.of(context).colorScheme.onPrimary),
-              borderRadius: BorderRadius.circular(100)),
-          child: Icon(
-            Icons.add,
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        ),
-      ),
+      floatingActionButton: isKeyboardOpened
+          ? null
+          : FloatingActionButton(
+              onPressed: () async {
+                if (homeProvider.isBottomSheetOpened) {
+                  if ((globalKey.currentState?.validate() ?? false) &&
+                      homeProvider.selectedDate != null) {
+                    await FirestoreHelper.addNewTask(
+                      task: TaskModel(
+                        title: titleController.text,
+                        description: descController.text,
+                        date: homeProvider.selectedDate!.millisecondsSinceEpoch,
+                      ),
+                      userID: provider.fireBaseUserAuth!.uid,
+                    );
+                    titleController.text = '';
+                    descController.text = '';
+                    homeProvider.selectedDate = null;
+
+                    Navigator.pop(context);
+                    homeProvider.changeBootomSheetValue();
+                  }
+                } else {
+                  showAddTaskBottomSheet(context, homeProvider);
+                  homeProvider.changeBootomSheetValue();
+                }
+              },
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              shape: RoundedRectangleBorder(
+                  side: BorderSide(
+                      width: 3, color: Theme.of(context).colorScheme.onPrimary),
+                  borderRadius: BorderRadius.circular(100)),
+              child: homeProvider.isBottomSheetOpened
+                  ? Icon(
+                      Icons.check,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    )
+                  : Icon(
+                      Icons.add,
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+            ),
+    );
+  }
+
+  void showAddTaskBottomSheet(BuildContext context, HomeProvider homeProvider) {
+    scaffoldKey.currentState?.showBottomSheet(
+      (context) {
+        return AddTaskSheet(
+          ontap: () {
+            homeProvider.changeBootomSheetValue();
+            Navigator.pop(context);
+          },
+          formkey: globalKey,
+          titleController: titleController,
+          descController: descController,
+        );
+      },
     );
   }
 }
