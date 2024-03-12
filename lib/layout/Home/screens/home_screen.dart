@@ -96,9 +96,9 @@ class HomeScreen extends StatelessWidget {
                           ),
                           userID: provider.fireBaseUserAuth!.uid,
                         );
+
                         titleController.text = '';
                         descController.text = '';
-                        homeProvider.selectNewTime(null);
                         Navigator.pop(context);
                         homeProvider.changeBootomSheetValue();
                       }
