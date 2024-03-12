@@ -103,9 +103,11 @@ class EditTask extends StatelessWidget {
                         child: Text(
                             homeProvider.selectedDate == null
                                 ? 'Select Date'
-                                : DateFormat('dd/MM/yyyy').format(
-                                    DateTime.fromMillisecondsSinceEpoch(
-                                        task.date!)),
+                                : DateFormat('dd/MM/yyyy')
+                                    .format(homeProvider.selectedDate!),
+                            // DateFormat('dd/MM/yyyy').format(
+                            // DateTime.fromMillisecondsSinceEpoch(
+                            //     task.date!))
                             style: Theme.of(context).textTheme.bodyLarge)),
                     Row(
                       children: [

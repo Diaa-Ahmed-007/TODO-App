@@ -137,19 +137,43 @@ class TaskWidget extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+              task.isDone!
+                  ? TextButton(
+                      onPressed: () async {
+                        await FirestoreHelper.getIsDoneValue(
+                            userID: provider.fireBaseUserAuth!.uid,
+                            taskID: task.id!,
+                            newValue: !task.isDone!);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Text(
+                          "Done!",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ))
+                  : Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () async {
+                            await FirestoreHelper.getIsDoneValue(
+                                userID: provider.fireBaseUserAuth!.uid,
+                                taskID: task.id!,
+                                newValue: !task.isDone!);
+                          },
+                          child: const Icon(Icons.done)),
                     ),
-                    onPressed: () {},
-                    child: const Icon(Icons.done)),
-              )
             ],
           ),
         ),
