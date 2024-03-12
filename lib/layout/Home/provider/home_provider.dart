@@ -15,7 +15,6 @@ class HomeProvider extends ChangeNotifier {
   }
 
   DateTime? selectedDate = DateTime.now();
-
   void selectNewDate(DateTime? newSelected) {
     if (selectedDate == newSelected) return;
     selectedDate = newSelected;

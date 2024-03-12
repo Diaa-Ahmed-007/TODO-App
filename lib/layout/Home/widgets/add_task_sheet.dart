@@ -85,7 +85,7 @@ class AddTaskSheet extends StatelessWidget {
               TextButton(
                   onPressed: () async {
                     TimeOfDay? selectedTime = await showTimePicker(
-                      
+
                         context: context,
                         initialTime: const TimeOfDay(hour: 12, minute: 00));
                     provider.selectNewTime(selectedTime);

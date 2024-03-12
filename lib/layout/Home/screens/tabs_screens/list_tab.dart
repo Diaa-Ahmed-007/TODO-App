@@ -1,4 +1,4 @@
-import 'dart:developer';
+
 
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +91,7 @@ class _ListTabState extends State<ListTab> {
                   )),
               onDateChange: (selectedDate) {
                 setState(() {
-                  log(selectedDate.millisecondsSinceEpoch.toString());
+
                   homeProvider.selectNewDate(selectedDate);
                   _focusDate = DateTime(
                       selectedDate.year, selectedDate.month, selectedDate.day);
