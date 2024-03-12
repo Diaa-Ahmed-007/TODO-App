@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/layout/Home/provider/home_provider.dart';
 import 'package:todo/layout/Home/widgets/task_widget.dart';
 import 'package:todo/layout/login/login_screen.dart';
 import 'package:todo/models/task_model.dart';
@@ -20,6 +23,7 @@ class _ListTabState extends State<ListTab> {
   @override
   Widget build(BuildContext context) {
     MyAuthProvider provider = Provider.of<MyAuthProvider>(context);
+    HomeProvider homeProvider = Provider.of<HomeProvider>(context);
     var hight = MediaQuery.of(context).size.height;
     return Column(
       children: [
@@ -55,7 +59,7 @@ class _ListTabState extends State<ListTab> {
               timeLineProps: const EasyTimeLineProps(),
               showTimelineHeader: false,
               dayProps: EasyDayProps(
-                  dayStructure: DayStructure.dayStrDayNum,
+                  dayStructure: DayStructure.monthDayNumDayStr,
                   height: hight * 0.1,
                   inactiveDayStyle: DayStyle(
                     decoration: BoxDecoration(
@@ -63,6 +67,7 @@ class _ListTabState extends State<ListTab> {
                         borderRadius: BorderRadius.circular(10)),
                     dayStrStyle: Theme.of(context).textTheme.displayMedium,
                     dayNumStyle: Theme.of(context).textTheme.displayMedium,
+                    monthStrStyle: Theme.of(context).textTheme.displayMedium,
                   ),
                   activeDayStyle: DayStyle(
                     decoration: BoxDecoration(
@@ -71,6 +76,7 @@ class _ListTabState extends State<ListTab> {
                     ),
                     dayNumStyle: Theme.of(context).textTheme.displaySmall,
                     dayStrStyle: Theme.of(context).textTheme.displaySmall,
+                    monthStrStyle: Theme.of(context).textTheme.displaySmall,
                   ),
                   todayStyle: DayStyle(
                     decoration: BoxDecoration(
@@ -81,9 +87,12 @@ class _ListTabState extends State<ListTab> {
                             width: 3)),
                     dayNumStyle: Theme.of(context).textTheme.displayLarge,
                     dayStrStyle: Theme.of(context).textTheme.displayLarge,
+                    monthStrStyle: Theme.of(context).textTheme.displayLarge,
                   )),
               onDateChange: (selectedDate) {
                 setState(() {
+                  log(selectedDate.millisecondsSinceEpoch.toString());
+                  homeProvider.selectNewDate(selectedDate);
                   _focusDate = DateTime(
                       selectedDate.year, selectedDate.month, selectedDate.day);
                 });
