@@ -34,7 +34,6 @@ class EditTask extends StatelessWidget {
               backgroundColor: Theme.of(context).primaryColor,
               leading: IconButton(
                 onPressed: () {
-                  homeProvider.selectNewTime(null);
                   Navigator.pop(context);
                 },
                 icon: const Icon(Icons.arrow_back),
@@ -105,9 +104,6 @@ class EditTask extends StatelessWidget {
                                 ? 'Select Date'
                                 : DateFormat('dd/MM/yyyy')
                                     .format(homeProvider.selectedDate!),
-                            // DateFormat('dd/MM/yyyy').format(
-                            // DateTime.fromMillisecondsSinceEpoch(
-                            //     task.date!))
                             style: Theme.of(context).textTheme.bodyLarge)),
                     Row(
                       children: [
@@ -164,7 +160,7 @@ class EditTask extends StatelessWidget {
                                     homeProvider.selectedTime!.minute),
                               ),
                             ));
-                        homeProvider.selectNewTime(null);
+
                         Navigator.pop(context);
                       },
                       child: const Text("Save Changes"),

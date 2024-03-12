@@ -15,7 +15,6 @@ class TaskWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var hight = MediaQuery.of(context).size.height;
-    DateTime taskDate = DateTime.fromMillisecondsSinceEpoch(task.date ?? 0);
     MyAuthProvider provider = Provider.of<MyAuthProvider>(context);
     HomeProvider homeProvider = Provider.of<HomeProvider>(context);
 
@@ -126,7 +125,7 @@ class TaskWidget extends StatelessWidget {
                         width: 10,
                       ),
                       Text(
-                        " ${DateFormat.jm().format(taskDate)}",
+                        " ${task.time}",
                         style: const TextStyle(
                             color: Colors.black,
                             fontSize: 12,
