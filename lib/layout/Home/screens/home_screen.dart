@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/provider/home_provider.dart';
 import 'package:todo/layout/Home/screens/tabs_screens/list_tab.dart';
@@ -43,6 +44,11 @@ class HomeScreen extends StatelessWidget {
           currentIndex: homeProvider.currentNavIndex,
           onTap: (value) {
             homeProvider.changeTab(value);
+            if (value == 0) {
+              homeProvider.changeFloatingActionButtonVisable(true);
+            } else {
+              homeProvider.changeFloatingActionButtonVisable(false);
+            }
           },
           items: const [
             BottomNavigationBarItem(
@@ -59,46 +65,65 @@ class HomeScreen extends StatelessWidget {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: isKeyboardOpened
           ? null
-          : FloatingActionButton(
-              onPressed: () async {
-                if (homeProvider.isBottomSheetOpened) {
-                  if ((globalKey.currentState?.validate() ?? false) &&
-                      homeProvider.selectedDate != null) {
-                    await FirestoreHelper.addNewTask(
-                      task: TaskModel(
-                        title: titleController.text,
-                        description: descController.text,
-                        date: homeProvider.selectedDate!.millisecondsSinceEpoch,
-                      ),
-                      userID: provider.fireBaseUserAuth!.uid,
-                    );
-                    titleController.text = '';
-                    descController.text = '';
-                    homeProvider.selectedDate = null;
-
-                    Navigator.pop(context);
-                    homeProvider.changeBootomSheetValue();
-                  }
-                } else {
-                  showAddTaskBottomSheet(context, homeProvider);
-                  homeProvider.changeBootomSheetValue();
-                }
-              },
-              backgroundColor: Theme.of(context).colorScheme.primary,
-              shape: RoundedRectangleBorder(
-                  side: BorderSide(
-                      width: 3, color: Theme.of(context).colorScheme.onPrimary),
-                  borderRadius: BorderRadius.circular(100)),
-              child: homeProvider.isBottomSheetOpened
-                  ? Icon(
-                      Icons.check,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    )
-                  : Icon(
-                      Icons.add,
-                      color: Theme.of(context).colorScheme.onPrimary,
-                    ),
-            ),
+          : homeProvider.visableFloatingActionButton
+              ? FloatingActionButton(
+                  onPressed: () async {
+                    if (homeProvider.isBottomSheetOpened) {
+                      if ((globalKey.currentState?.validate() ?? false) &&
+                          homeProvider.selectedDate != null) {
+                        await FirestoreHelper.addNewTask(
+                          task: TaskModel(
+                            title: titleController.text,
+                            description: descController.text,
+                            date: DateTime(
+                              homeProvider.selectedDate!.year,
+                              homeProvider.selectedDate!.month,
+                              homeProvider.selectedDate!.day,
+                            ).millisecondsSinceEpoch,
+                            time: homeProvider.selectedTime == null
+                                ? DateFormat.jm().format(DateTime(
+                                    homeProvider.selectedDate!.year,
+                                    homeProvider.selectedDate!.month,
+                                    homeProvider.selectedDate!.day,
+                                    24,
+                                    0))
+                                : DateFormat.jm().format(DateTime(
+                                    homeProvider.selectedDate!.year,
+                                    homeProvider.selectedDate!.month,
+                                    homeProvider.selectedDate!.day,
+                                    homeProvider.selectedTime!.hour,
+                                    homeProvider.selectedTime!.minute)),
+                          ),
+                          userID: provider.fireBaseUserAuth!.uid,
+                        );
+                        titleController.text = '';
+                        descController.text = '';
+                        homeProvider.selectNewTime(null);
+                        Navigator.pop(context);
+                        homeProvider.changeBootomSheetValue();
+                      }
+                    } else {
+                      showAddTaskBottomSheet(context, homeProvider);
+                      homeProvider.changeBootomSheetValue();
+                    }
+                  },
+                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  shape: RoundedRectangleBorder(
+                      side: BorderSide(
+                          width: 3,
+                          color: Theme.of(context).colorScheme.onPrimary),
+                      borderRadius: BorderRadius.circular(100)),
+                  child: homeProvider.isBottomSheetOpened
+                      ? Icon(
+                          Icons.check,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        )
+                      : Icon(
+                          Icons.add,
+                          color: Theme.of(context).colorScheme.onPrimary,
+                        ),
+                )
+              : null,
     );
   }
 

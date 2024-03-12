@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/layout/Home/provider/home_provider.dart';
+import 'package:todo/layout/Home/widgets/edit_task.dart';
 import 'package:todo/models/task_model.dart';
 import 'package:todo/shared/providers/auth_provider.dart';
 import 'package:todo/shared/remote/firebase/firestore_helper.dart';
@@ -15,6 +17,8 @@ class TaskWidget extends StatelessWidget {
     var hight = MediaQuery.of(context).size.height;
     DateTime taskDate = DateTime.fromMillisecondsSinceEpoch(task.date ?? 0);
     MyAuthProvider provider = Provider.of<MyAuthProvider>(context);
+    HomeProvider homeProvider = Provider.of<HomeProvider>(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       child: Slidable(
@@ -45,7 +49,29 @@ class TaskWidget extends StatelessWidget {
               ],
             ),
           ),
-         
+          CustomSlidableAction(
+            onPressed: (_) {
+              homeProvider.selectNewTime(TimeOfDay.fromDateTime(
+                  DateFormat().add_jm().parse(task.time!)));
+              Navigator.pushNamed(context, EditTask.routeName, arguments: task);
+            },
+            backgroundColor: Theme.of(context).colorScheme.outline,
+            foregroundColor: Colors.white,
+            autoClose: true,
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.edit,
+                  size: 30,
+                ),
+                Text(
+                  'Edit',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                ),
+              ],
+            ),
+          ),
         ]),
         child: Container(
           width: double.infinity,
@@ -67,7 +93,9 @@ class TaskWidget extends StatelessWidget {
                 width: 5,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(10),
-                  color: Theme.of(context).colorScheme.primary,
+                  color: task.isDone!
+                      ? Theme.of(context).colorScheme.outline
+                      : Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(
@@ -79,7 +107,9 @@ class TaskWidget extends StatelessWidget {
                   Text(
                     task.title ?? "",
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
+                        color: task.isDone!
+                            ? Theme.of(context).colorScheme.outline
+                            : Theme.of(context).colorScheme.primary,
                         fontSize: 20),
                   ),
                   SizedBox(
@@ -107,19 +137,43 @@ class TaskWidget extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(right: 20),
-                child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Theme.of(context).colorScheme.primary,
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+              task.isDone!
+                  ? TextButton(
+                      onPressed: () async {
+                        await FirestoreHelper.getIsDoneValue(
+                            userID: provider.fireBaseUserAuth!.uid,
+                            taskID: task.id!,
+                            newValue: !task.isDone!);
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 20),
+                        child: Text(
+                          "Done!",
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700),
+                        ),
+                      ))
+                  : Padding(
+                      padding: const EdgeInsets.only(right: 20),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                Theme.of(context).colorScheme.primary,
+                            elevation: 3,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onPressed: () async {
+                            await FirestoreHelper.getIsDoneValue(
+                                userID: provider.fireBaseUserAuth!.uid,
+                                taskID: task.id!,
+                                newValue: !task.isDone!);
+                          },
+                          child: const Icon(Icons.done)),
                     ),
-                    onPressed: () {},
-                    child: const Icon(Icons.done)),
-              )
             ],
           ),
         ),

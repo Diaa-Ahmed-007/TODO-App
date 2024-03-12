@@ -60,6 +60,11 @@ class FirestoreHelper {
   //       document.docs.map((snapshot) => snapshot.data()).toList();
   //   return tasks;
   // }
+  static Future<String> getTimeDoc(
+      {required String userID, required String taskID}) async {
+    var time = await getTaskCollection(userID).doc(taskID).get();
+    return time["time"];
+  }
 
   static Stream<List<TaskModel>> listenToTasks(
       {required String UserID, required int date}) async* {
@@ -75,7 +80,17 @@ class FirestoreHelper {
     await getTaskCollection(userID).doc(taskID).delete();
   }
 
-  static Future<void> updateTasks({required String userID, required String taskID,required TaskModel task}) async {
+  static Future<void> updateTasks(
+      {required String userID,
+      required String taskID,
+      required TaskModel task}) async {
     await getTaskCollection(userID).doc(taskID).update(task.toFirestore());
+  }
+
+  static Future<void> getIsDoneValue(
+      {required String userID,
+      required String taskID,
+      required bool newValue}) async {
+    await getTaskCollection(userID).doc(taskID).update({"isDone": newValue});
   }
 }

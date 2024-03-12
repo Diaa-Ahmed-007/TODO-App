@@ -1,6 +1,5 @@
-
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/provider/home_provider.dart';
 import 'package:todo/shared/reusable_componenets/task_text_field.dart';
@@ -29,7 +28,8 @@ class AddTaskSheet extends StatelessWidget {
       ),
       child: Form(
         key: formkey,
-        child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -76,35 +76,6 @@ class AddTaskSheet extends StatelessWidget {
                 height: 10,
               ),
               Text(
-                "select Date",
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              TextButton(
-                  onPressed: () async {
-                    DateTime? selectedDate = await showDatePicker(
-                      context: context,
-                      firstDate: DateTime.now(),
-                      lastDate: DateTime.now().add(
-                        const Duration(days: 365),
-                      ),
-                    );
-                    provider.selectNewDate(selectedDate);
-                  },
-                  child: Text(
-                      provider.selectedDate == null
-                          ? 'Select Date'
-                          : '${provider.selectedDate!.day} / ${provider.selectedDate!.month} / ${provider.selectedDate!.year}',
-                      style: Theme.of(context).textTheme.bodyLarge)),
-              const SizedBox(
-                height: 20,
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Text(
                 "select time",
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
@@ -114,14 +85,25 @@ class AddTaskSheet extends StatelessWidget {
               TextButton(
                   onPressed: () async {
                     TimeOfDay? selectedTime = await showTimePicker(
+
                         context: context,
                         initialTime: const TimeOfDay(hour: 12, minute: 00));
                     provider.selectNewTime(selectedTime);
                   },
                   child: Text(
                     provider.selectedTime == null
-                        ? 'Select time'
-                        : '${provider.selectedTime!.hour} : ${provider.selectedDate!.minute} ',
+                        ? DateFormat.jm().format(DateTime(
+                            provider.selectedDate!.year,
+                            provider.selectedDate!.month,
+                            provider.selectedDate!.day,
+                            24,
+                            0))
+                        : DateFormat.jm().format(DateTime(
+                            provider.selectedDate!.year,
+                            provider.selectedDate!.month,
+                            provider.selectedDate!.day,
+                            provider.selectedTime!.hour,
+                            provider.selectedTime!.minute)),
                     style: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                         fontSize: 20,

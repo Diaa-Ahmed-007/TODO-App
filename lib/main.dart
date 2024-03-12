@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:todo/firebase_options.dart';
 import 'package:todo/layout/Home/provider/home_provider.dart';
 import 'package:todo/layout/Home/screens/home_screen.dart';
+import 'package:todo/layout/Home/widgets/edit_task.dart';
 import 'package:todo/layout/login/login_screen.dart';
 import 'package:todo/layout/login/provider/visability_login_provider.dart';
 import 'package:todo/layout/register/register_screen.dart';
@@ -45,7 +46,8 @@ class MyApp extends StatelessWidget {
                 create: (context) => HomeProvider(),
                 child: HomeScreen(),
               ),
-      
+          EditTask.routeName: (context) => ChangeNotifierProvider(
+              create: (context) => HomeProvider(), child: EditTask()),
         },
         theme: AppTheme.lightTheme,
         initialRoute: SplashScreen.routeName,
