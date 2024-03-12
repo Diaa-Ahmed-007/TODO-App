@@ -27,4 +27,13 @@ class HomeProvider extends ChangeNotifier {
     selectedTime = newSelected;
     notifyListeners();
   }
+
+  bool visableFloatingActionButton = true;
+  bool changeFloatingActionButtonVisable(bool newVal) {
+    if (visableFloatingActionButton == newVal) {
+      return visableFloatingActionButton;
+    }
+    visableFloatingActionButton = newVal;
+    return visableFloatingActionButton;
+  }
 }
