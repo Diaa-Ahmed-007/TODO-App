@@ -15,16 +15,26 @@ class HomeProvider extends ChangeNotifier {
   }
 
   DateTime? selectedDate = DateTime.now();
+
   void selectNewDate(DateTime? newSelected) {
     if (selectedDate == newSelected) return;
     selectedDate = newSelected;
     notifyListeners();
   }
 
-  TimeOfDay? selectedTime;
+  TimeOfDay? selectedTime = TimeOfDay.now();
   void selectNewTime(TimeOfDay? newSelected) {
     if (selectedTime == newSelected) return;
     selectedTime = newSelected;
     notifyListeners();
+
   }
+      bool visableFloatingActionButton = true;
+    bool changeFloatingActionButtonVisable(bool newVal) {
+      if (visableFloatingActionButton == newVal) {
+        return visableFloatingActionButton;
+      }
+      visableFloatingActionButton = newVal;
+      return visableFloatingActionButton;
+    }
 }
