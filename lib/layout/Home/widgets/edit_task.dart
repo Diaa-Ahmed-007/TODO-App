@@ -160,6 +160,7 @@ class EditTask extends StatelessWidget {
                                     homeProvider.selectedTime!.minute),
                               ),
                             ));
+
                         Navigator.pop(context);
                       },
                       child: const Text("Save Changes"),
