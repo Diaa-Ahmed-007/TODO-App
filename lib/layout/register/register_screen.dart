@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/screens/home_screen.dart';
 import 'package:todo/layout/login/provider/visability_login_provider.dart';
@@ -38,12 +39,13 @@ class RegisterScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          elevation: 0,
           iconTheme: const IconThemeData(color: Colors.white),
           automaticallyImplyLeading: false,
           backgroundColor: Colors.transparent,
-          title: const Text(
-            'Register',
-            style: TextStyle(color: Colors.white),
+          title: Text(
+            AppLocalizations.of(context)!.register,
+            style: const TextStyle(color: Colors.white),
           ),
           centerTitle: true,
         ),
@@ -56,7 +58,7 @@ class RegisterScreen extends StatelessWidget {
                 height: 160,
               ),
               CustomTextField(
-                labelWord: 'First Name',
+                labelWord: AppLocalizations.of(context)!.name,
                 controller: fullName,
                 val: (value) {
                   if (value == null || value.isEmpty) {
@@ -67,7 +69,7 @@ class RegisterScreen extends StatelessWidget {
                 passwordVisible: false,
               ),
               CustomTextField(
-                labelWord: 'Email',
+                labelWord: AppLocalizations.of(context)!.email,
                 val: (value) {
                   if (value == null || value.isEmpty) {
                     return 'this field is required';
@@ -90,7 +92,7 @@ class RegisterScreen extends StatelessWidget {
                       ? const Icon(Icons.visibility_off)
                       : const Icon(Icons.visibility),
                 ),
-                labelWord: 'password',
+                labelWord: AppLocalizations.of(context)!.password,
                 val: (value) {
                   if (value == null || value.isEmpty) {
                     return 'this field is required';
@@ -104,7 +106,7 @@ class RegisterScreen extends StatelessWidget {
                 passwordVisible: provider.getRegisterPassVisible(),
               ),
               CustomTextField(
-                labelWord: 'confirm passworsd',
+                labelWord: AppLocalizations.of(context)!.confirmPass,
                 controller: confirmPassController,
                 val: (value) {
                   if (value != passController.text) {
@@ -134,20 +136,23 @@ class RegisterScreen extends StatelessWidget {
                         fullName: fullName,
                         formstate: formstate);
                   },
-                  lapel: 'Register'),
+                  lapel: AppLocalizations.of(context)!.register),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "already have an account?",
-                    style: TextStyle(color: Colors.black),
+                  Text(
+                    AppLocalizations.of(context)!.haveAccount,
+                    style: const TextStyle(color: Colors.black),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text("Sign In",
-                        style: Theme.of(context).textTheme.bodySmall),
+                    child: Text(AppLocalizations.of(context)!.login,
+                        style: Theme.of(context)
+                            .textTheme
+                            .displayLarge
+                            ?.copyWith(fontSize: 18)),
                   )
                 ],
               ),
@@ -176,19 +181,22 @@ class RegisterScreen extends StatelessWidget {
                 userID: user.user!.uid,
                 email: emailController.text,
                 fullName: fullName.text));
+
         Navigator.pushNamedAndRemoveUntil(
           context,
           HomeScreen.routeName,
           (route) => false,
         );
+        FireBaseAuthErrorMassage.alertDialog(context, 'success');
       } on FirebaseAuthException catch (e) {
         if (e.code == 'email-already-in-use') {
-          FireBaseAuthErrorMassage.showSnackBar(context, 'email already exist');
+          FireBaseAuthErrorMassage.alertDialog(context, 'email already exist');
         } else {
-          FireBaseAuthErrorMassage.showSnackBar(context, e.code);
+          FireBaseAuthErrorMassage.alertDialog(context, e.code);
         }
+      } catch (e) {
+        FireBaseAuthErrorMassage.alertDialog(context, e.toString());
       }
-      FireBaseAuthErrorMassage.showSnackBar(context, 'success');
     }
   }
 }

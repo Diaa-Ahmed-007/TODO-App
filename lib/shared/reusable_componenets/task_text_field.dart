@@ -14,9 +14,17 @@ class TaskTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       validator: val,
+      style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 16),
       decoration: InputDecoration(
-        enabledBorder: const UnderlineInputBorder(),
+        enabledBorder: UnderlineInputBorder(
+          borderSide:
+              BorderSide(color: Theme.of(context).colorScheme.onSecondary),
+        ),
         hintText: label,
+        hintStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontSize: 16,
+              fontWeight: FontWeight.w300,
+            ),
       ),
     );
   }

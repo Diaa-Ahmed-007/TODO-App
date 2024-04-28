@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/provider/home_provider.dart';
+import 'package:todo/layout/Home/provider/settings_provider.dart';
 import 'package:todo/layout/Home/widgets/edit_task.dart';
 import 'package:todo/models/task_model.dart';
 import 'package:todo/shared/providers/auth_provider.dart';
@@ -17,7 +19,7 @@ class TaskWidget extends StatelessWidget {
     var hight = MediaQuery.of(context).size.height;
     MyAuthProvider provider = Provider.of<MyAuthProvider>(context);
     HomeProvider homeProvider = Provider.of<HomeProvider>(context);
-
+    SettingsProvider settingsProvider = Provider.of<SettingsProvider>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
       child: Slidable(
@@ -32,18 +34,26 @@ class TaskWidget extends StatelessWidget {
             backgroundColor: const Color(0xFFFE4A49),
             foregroundColor: Colors.white,
             autoClose: true,
-            borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(15), bottomLeft: Radius.circular(15)),
-            child: const Column(
+            borderRadius: settingsProvider.selectedLanguage == 'en'
+                ? const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15),
+                  )
+                : const BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    bottomRight: Radius.circular(15),
+                  ),
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.delete,
                   size: 30,
                 ),
                 Text(
-                  'delete',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                  AppLocalizations.of(context)!.delete,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w400),
                 )
               ],
             ),
@@ -54,19 +64,21 @@ class TaskWidget extends StatelessWidget {
                   DateFormat().add_jm().parse(task.time!)));
               Navigator.pushNamed(context, EditTask.routeName, arguments: task);
             },
-            backgroundColor: Theme.of(context).colorScheme.outline,
+            backgroundColor:
+                Theme.of(context).colorScheme.outline.withOpacity(0.8),
             foregroundColor: Colors.white,
             autoClose: true,
-            child: const Column(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.edit,
                   size: 30,
                 ),
                 Text(
-                  'Edit',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400),
+                  AppLocalizations.of(context)!.edit,
+                  style: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w400),
                 ),
               ],
             ),
@@ -75,11 +87,15 @@ class TaskWidget extends StatelessWidget {
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-                topRight: Radius.circular(15),
-                bottomRight: Radius.circular(15)),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onPrimary,
+            borderRadius: settingsProvider.selectedLanguage == 'en'
+                ? const BorderRadius.only(
+                    topRight: Radius.circular(15),
+                    bottomRight: Radius.circular(15))
+                : const BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    bottomLeft: Radius.circular(15)),
           ),
           child: Row(
             children: [
@@ -124,13 +140,8 @@ class TaskWidget extends StatelessWidget {
                       const SizedBox(
                         width: 10,
                       ),
-                      Text(
-                        " ${task.time}",
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400),
-                      )
+                      Text("${task.time}",
+                          style: Theme.of(context).textTheme.labelSmall)
                     ],
                   )
                 ],
@@ -145,9 +156,9 @@ class TaskWidget extends StatelessWidget {
                             newValue: !task.isDone!);
                       },
                       child: Padding(
-                        padding: const EdgeInsets.only(right: 20),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         child: Text(
-                          "Done!",
+                          AppLocalizations.of(context)!.done,
                           style: TextStyle(
                               color: Theme.of(context).colorScheme.outline,
                               fontSize: 22,
@@ -155,7 +166,7 @@ class TaskWidget extends StatelessWidget {
                         ),
                       ))
                   : Padding(
-                      padding: const EdgeInsets.only(right: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             backgroundColor:

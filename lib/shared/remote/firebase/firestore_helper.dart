@@ -51,7 +51,6 @@ class FirestoreHelper {
     var document = getTaskCollection(userID).doc();
     task.id = document.id;
     await document.set(task);
-    log(task.toString());
   }
 
   // static Future<List<TaskModel>> getTasks({required String UserID}) async {

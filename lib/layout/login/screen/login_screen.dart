@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/screens/home_screen.dart';
 import 'package:todo/layout/login/provider/visability_login_provider.dart';
@@ -38,9 +39,10 @@ class LoginScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: const Text(
-            'Login',
-            style: TextStyle(color: Colors.white),
+          elevation: 0,
+          title: Text(
+            AppLocalizations.of(context)!.login,
+            style: const TextStyle(color: Colors.white),
           ),
           centerTitle: true,
         ),
@@ -50,7 +52,7 @@ class LoginScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CustomTextField(
-                labelWord: 'Email',
+                labelWord: AppLocalizations.of(context)!.email,
                 val: (value) {
                   if (value == null || value.isEmpty) {
                     return 'this field is required';
@@ -64,7 +66,7 @@ class LoginScreen extends StatelessWidget {
                 passwordVisible: false,
               ),
               CustomTextField(
-                labelWord: 'password',
+                labelWord: AppLocalizations.of(context)!.password,
                 val: (value) {
                   if (value == null || value.isEmpty) {
                     return 'this field is required';
@@ -89,22 +91,25 @@ class LoginScreen extends StatelessWidget {
                     logIn(context);
                   }
                 },
-                lapel: 'Login',
+                lapel: AppLocalizations.of(context)!.login,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    "don't have an account?",
-                    style: TextStyle(color: Colors.black),
+                  Text(
+                    AppLocalizations.of(context)!.haveNotAccount,
+                    style: const TextStyle(color: Colors.black),
                   ),
                   TextButton(
                     onPressed: () {
                       Navigator.pushNamed(context, RegisterScreen.routeName);
                     },
                     child: Text(
-                      "Sign Up",
-                      style: Theme.of(context).textTheme.bodySmall,
+                      AppLocalizations.of(context)!.register,
+                      style: Theme.of(context)
+                          .textTheme
+                          .displayLarge
+                          ?.copyWith(fontSize: 18),
                     ),
                   )
                 ],
@@ -133,12 +138,14 @@ class LoginScreen extends StatelessWidget {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        FireBaseAuthErrorMassage.showSnackBar(
+        FireBaseAuthErrorMassage.alertDialog(
             context, 'No user found for that email.');
       } else if (e.code == 'wrong-password') {
-        FireBaseAuthErrorMassage.showSnackBar(
+        FireBaseAuthErrorMassage.alertDialog(
             context, 'Wrong password provided for that user.');
       }
+    } catch (e) {
+      FireBaseAuthErrorMassage.alertDialog(context, e.toString());
     }
   }
 }

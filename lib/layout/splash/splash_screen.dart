@@ -3,7 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/screens/home_screen.dart';
-import 'package:todo/layout/login/login_screen.dart';
+import 'package:todo/layout/login/screen/login_screen.dart';
 import 'package:todo/shared/providers/auth_provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -21,10 +21,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   _navigatetohome() async {
-    await Future.delayed(const Duration(seconds: 2), () {
-      checkAutoLogin();
-      //   Navigator.pushReplacementNamed(context, LoginScreen.routeName);
-    });
+    await Future.delayed(
+      const Duration(seconds: 2),
+      () {
+        checkAutoLogin();
+      },
+    );
   }
 
   @override

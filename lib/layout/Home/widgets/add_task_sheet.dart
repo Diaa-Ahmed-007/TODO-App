@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/provider/home_provider.dart';
 import 'package:todo/shared/reusable_componenets/task_text_field.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class AddTaskSheet extends StatelessWidget {
   const AddTaskSheet(
@@ -19,9 +20,9 @@ class AddTaskSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     HomeProvider provider = Provider.of<HomeProvider>(context);
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.onPrimary,
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
@@ -37,14 +38,16 @@ class AddTaskSheet extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Add New Task',
+                    AppLocalizations.of(context)!.addTask,
                     style: Theme.of(context).textTheme.labelMedium,
                   ),
                   const SizedBox(
                     width: 20,
                   ),
                   IconButton(
-                      onPressed: ontap, icon: const Icon(Icons.cancel_outlined))
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      onPressed: ontap,
+                      icon: const Icon(Icons.cancel_outlined))
                 ],
               ),
               const SizedBox(
@@ -58,7 +61,7 @@ class AddTaskSheet extends StatelessWidget {
                   }
                   return null;
                 },
-                label: 'enter your task',
+                label: AppLocalizations.of(context)!.enterTask,
               ),
               const SizedBox(
                 height: 10,
@@ -71,12 +74,12 @@ class AddTaskSheet extends StatelessWidget {
                     }
                     return null;
                   },
-                  label: 'description'),
+                  label: AppLocalizations.of(context)!.description),
               const SizedBox(
                 height: 10,
               ),
               Text(
-                "select time",
+                AppLocalizations.of(context)!.selectTime,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               const SizedBox(
@@ -85,7 +88,6 @@ class AddTaskSheet extends StatelessWidget {
               TextButton(
                   onPressed: () async {
                     TimeOfDay? selectedTime = await showTimePicker(
-
                         context: context,
                         initialTime: const TimeOfDay(hour: 12, minute: 00));
                     provider.selectNewTime(selectedTime);

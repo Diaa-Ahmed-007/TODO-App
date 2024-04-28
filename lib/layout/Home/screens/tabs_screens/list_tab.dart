@@ -1,11 +1,11 @@
-
-
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/provider/home_provider.dart';
+import 'package:todo/layout/Home/provider/settings_provider.dart';
 import 'package:todo/layout/Home/widgets/task_widget.dart';
-import 'package:todo/layout/login/login_screen.dart';
+import 'package:todo/layout/login/screen/login_screen.dart';
 import 'package:todo/models/task_model.dart';
 import 'package:todo/shared/providers/auth_provider.dart';
 import 'package:todo/shared/remote/firebase/firestore_helper.dart';
@@ -17,13 +17,14 @@ class ListTab extends StatefulWidget {
   State<ListTab> createState() => _ListTabState();
 }
 
-DateTime _focusDate = DateTime.now();
-
 class _ListTabState extends State<ListTab> {
+  DateTime focusDate =
+      DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
   @override
   Widget build(BuildContext context) {
     MyAuthProvider provider = Provider.of<MyAuthProvider>(context);
     HomeProvider homeProvider = Provider.of<HomeProvider>(context);
+    SettingsProvider settingsProvider = Provider.of<SettingsProvider>(context);
     var hight = MediaQuery.of(context).size.height;
     return Column(
       children: [
@@ -37,7 +38,7 @@ class _ListTabState extends State<ListTab> {
                 backgroundColor: Theme.of(context).primaryColor,
                 toolbarHeight: hight * 0.2,
                 title: Text(
-                  'Hello ${provider.dataBaseUser!.fullName ?? 'user'}',
+                  '${AppLocalizations.of(context)!.hello} ${provider.dataBaseUser!.fullName ?? 'user'}',
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
                 actions: [
@@ -53,8 +54,9 @@ class _ListTabState extends State<ListTab> {
               ),
             ),
             EasyInfiniteDateTimeLine(
+              locale: settingsProvider.getLanguage(),
               firstDate: DateTime.now(),
-              focusDate: _focusDate,
+              focusDate: focusDate,
               lastDate: DateTime.now().add(const Duration(days: 365)),
               timeLineProps: const EasyTimeLineProps(),
               showTimelineHeader: false,
@@ -91,9 +93,8 @@ class _ListTabState extends State<ListTab> {
                   )),
               onDateChange: (selectedDate) {
                 setState(() {
-
                   homeProvider.selectNewDate(selectedDate);
-                  _focusDate = DateTime(
+                  focusDate = DateTime(
                       selectedDate.year, selectedDate.month, selectedDate.day);
                 });
               },
@@ -101,42 +102,42 @@ class _ListTabState extends State<ListTab> {
           ],
         ),
         StreamBuilder(
-          stream: FirestoreHelper.listenToTasks(
-              UserID: provider.dataBaseUser!.userID!,
-              date: _focusDate.millisecondsSinceEpoch),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Expanded(
-                child: Center(
-                  child: CircularProgressIndicator(),
+            stream: FirestoreHelper.listenToTasks(
+                UserID: provider.dataBaseUser!.userID!,
+                date: focusDate.millisecondsSinceEpoch),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        'oops,there is an error try again',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              List<TaskModel> tasks = snapshot.data ?? [];
+              return Expanded(
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) =>
+                      TaskWidget(task: tasks[index]),
                 ),
               );
-            }
-            if (snapshot.hasError) {
-              return Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'oops,there is an error try again',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.primary,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400),
-                    ),
-                  ],
-                ),
-              );
-            }
-            List<TaskModel> tasks = snapshot.data ?? [];
-            return Expanded(
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: tasks.length,
-                itemBuilder: (context, index) => TaskWidget(task: tasks[index]),
-              ),
-            );
-          },
-        )
+            })
       ],
     );
   }

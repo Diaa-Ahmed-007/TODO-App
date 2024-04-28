@@ -42,6 +42,8 @@ class HomeScreen extends StatelessWidget {
           elevation: 10,
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
           currentIndex: homeProvider.currentNavIndex,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
           onTap: (value) {
             homeProvider.changeTab(value);
             if (value == 0) {
@@ -129,6 +131,9 @@ class HomeScreen extends StatelessWidget {
 
   void showAddTaskBottomSheet(BuildContext context, HomeProvider homeProvider) {
     scaffoldKey.currentState?.showBottomSheet(
+      enableDrag: false,
+      elevation: 0,
+      backgroundColor: Colors.transparent,
       (context) {
         return AddTaskSheet(
           ontap: () {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/provider/home_provider.dart';
@@ -47,6 +48,7 @@ class EditTask extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(top: hight * 0.13),
             child: Card(
+              color: Theme.of(context).colorScheme.onPrimary,
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
               margin: EdgeInsets.only(
@@ -55,13 +57,15 @@ class EditTask extends StatelessWidget {
                   left: hight * 0.05,
                   right: hight * 0.05),
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.all(20),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "Edit title",
+                      AppLocalizations.of(context)!.editTask,
                       style: Theme.of(context).textTheme.labelMedium,
+                    ),
+                    SizedBox(
+                      height: hight * 0.1,
                     ),
                     TaskTextField(
                       controller: titleController,
@@ -71,7 +75,10 @@ class EditTask extends StatelessWidget {
                         }
                         return null;
                       },
-                      label: 'edit task',
+                      label: AppLocalizations.of(context)!.editTask,
+                    ),
+                    SizedBox(
+                      height: hight * 0.02,
                     ),
                     TaskTextField(
                         controller: descController,
@@ -81,10 +88,13 @@ class EditTask extends StatelessWidget {
                           }
                           return null;
                         },
-                        label: 'edit description'),
+                        label: AppLocalizations.of(context)!.editDesc),
+                    SizedBox(
+                      height: hight * 0.02,
+                    ),
                     Row(
                       children: [
-                        Text("Select Date",
+                        Text(AppLocalizations.of(context)!.selectDate,
                             style: Theme.of(context).textTheme.bodyMedium),
                       ],
                     ),
@@ -101,14 +111,14 @@ class EditTask extends StatelessWidget {
                         },
                         child: Text(
                             homeProvider.selectedDate == null
-                                ? 'Select Date'
+                                ? AppLocalizations.of(context)!.selectDate
                                 : DateFormat('dd/MM/yyyy')
                                     .format(homeProvider.selectedDate!),
                             style: Theme.of(context).textTheme.bodyLarge)),
                     Row(
                       children: [
                         Text(
-                          "select time",
+                          AppLocalizations.of(context)!.selectTime,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -163,7 +173,7 @@ class EditTask extends StatelessWidget {
 
                         Navigator.pop(context);
                       },
-                      child: const Text("Save Changes"),
+                      child: Text(AppLocalizations.of(context)!.saveChanges),
                     ),
                   ],
                 ),
