@@ -73,7 +73,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.datkTheme,
       themeMode: provider.getThemeMode(),
-      initialRoute: LoginScreen.routeName,
+      initialRoute: SplashScreen.routeName,
     );
   }
 }
