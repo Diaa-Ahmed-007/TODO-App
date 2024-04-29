@@ -26,5 +26,12 @@
     "arabic":"Arabic",
     "dark":"Dark",
     "light":"Light",
-    "done":"Done!"
+    "done":"Done!",
+    "noUser":"No user found for that email.",
+    "wrongePass":"Wrong password provided for that user.",
+    "emailAlreadyUse":"email already exist",
+    "fieldRequired":"this field is required",
+    "invalidInput":"invalid input",
+    "passLength":"password can't be less than 8",
+    "notMatch":"not match"
 }

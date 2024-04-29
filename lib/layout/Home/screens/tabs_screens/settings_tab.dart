@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/layout/Home/provider/settings_provider.dart';
+import 'package:todo/layout/login/screen/login_screen.dart';
+import 'package:todo/shared/providers/auth_provider.dart';
 
 class SettingsTab extends StatelessWidget {
   const SettingsTab({super.key});
@@ -19,7 +21,10 @@ class SettingsTab extends StatelessWidget {
     ];
 
     var hight = MediaQuery.of(context).size.height;
+    var width = MediaQuery.of(context).size.width;
     var provider = Provider.of<SettingsProvider>(context);
+    MyAuthProvider myAuthProvider = Provider.of<MyAuthProvider>(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -145,6 +150,30 @@ class SettingsTab extends StatelessWidget {
                               ? 'Light'
                               : 'Dark');
                     },
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: hight * 0.2,
+              ),
+              Align(
+                alignment: Alignment.center,
+                child: SizedBox(
+                  width: width * 0.5,
+                  height: hight * 0.05,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    onPressed: () {
+                      myAuthProvider.signOut();
+                      Navigator.pushReplacementNamed(
+                          context, LoginScreen.routeName);
+                    },
+                    child: const Text("Logout"),
                   ),
                 ),
               ),

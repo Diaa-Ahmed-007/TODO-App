@@ -55,10 +55,11 @@ class LoginScreen extends StatelessWidget {
                 labelWord: AppLocalizations.of(context)!.email,
                 val: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'this field is required';
+                    
+                    return AppLocalizations.of(context)?.fieldRequired ?? "";
                   }
                   if (!RegExp(Constants.regExp).hasMatch(value)) {
-                    return 'invalid input';
+                    return AppLocalizations.of(context)?.invalidInput??"";
                   }
                   return null;
                 },
@@ -69,7 +70,7 @@ class LoginScreen extends StatelessWidget {
                 labelWord: AppLocalizations.of(context)!.password,
                 val: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'this field is required';
+                    return AppLocalizations.of(context)?.fieldRequired ?? "";
                   }
                   return null;
                 },
@@ -124,6 +125,7 @@ class LoginScreen extends StatelessWidget {
   void logIn(BuildContext context) async {
     MyAuthProvider provider =
         Provider.of<MyAuthProvider>(context, listen: false);
+    FireBaseAuthErrorMassage.loadingAlertDialog(context);
     try {
       UserCredential credential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -131,6 +133,7 @@ class LoginScreen extends StatelessWidget {
       UserModel? user =
           await FirestoreHelper.getUser(UserID: credential.user!.uid);
       provider.setUsers(credential.user, user);
+      Navigator.pop(context);
       Navigator.pushNamedAndRemoveUntil(
         context,
         HomeScreen.routeName,
@@ -138,13 +141,16 @@ class LoginScreen extends StatelessWidget {
       );
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
+        Navigator.pop(context);
         FireBaseAuthErrorMassage.alertDialog(
-            context, 'No user found for that email.');
+            context, AppLocalizations.of(context)?.noUser ?? "");
       } else if (e.code == 'wrong-password') {
+        Navigator.pop(context);
         FireBaseAuthErrorMassage.alertDialog(
-            context, 'Wrong password provided for that user.');
+            context, AppLocalizations.of(context)?.wrongePass ?? "");
       }
     } catch (e) {
+      Navigator.pop(context);
       FireBaseAuthErrorMassage.alertDialog(context, e.toString());
     }
   }

@@ -62,7 +62,7 @@ class RegisterScreen extends StatelessWidget {
                 controller: fullName,
                 val: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'this field is required';
+                    return AppLocalizations.of(context)?.fieldRequired ?? "";
                   }
                   return null;
                 },
@@ -72,10 +72,10 @@ class RegisterScreen extends StatelessWidget {
                 labelWord: AppLocalizations.of(context)!.email,
                 val: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'this field is required';
+                    return AppLocalizations.of(context)?.fieldRequired ?? "";
                   }
                   if (!RegExp(Constants.regExp).hasMatch(value)) {
-                    return 'invalid input';
+                    return AppLocalizations.of(context)?.invalidInput??"";
                   }
                   return null;
                 },
@@ -95,10 +95,10 @@ class RegisterScreen extends StatelessWidget {
                 labelWord: AppLocalizations.of(context)!.password,
                 val: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'this field is required';
+                    return AppLocalizations.of(context)?.fieldRequired ?? "";
                   }
                   if (value.length < 8) {
-                    return "password can't be less than 8";
+                    return AppLocalizations.of(context)?.passLength??"";
                   }
                   return null;
                 },
@@ -110,10 +110,10 @@ class RegisterScreen extends StatelessWidget {
                 controller: confirmPassController,
                 val: (value) {
                   if (value != passController.text) {
-                    return 'not match';
+                    return AppLocalizations.of(context)?.notMatch??"";
                   }
                   if (value == null || value.isEmpty) {
-                    return 'this field is required';
+                    return AppLocalizations.of(context)?.fieldRequired ?? "";
                   }
                   return null;
                 },
@@ -168,7 +168,10 @@ class RegisterScreen extends StatelessWidget {
     MyAuthProvider provider =
         Provider.of<MyAuthProvider>(context, listen: false);
     if (formstate.currentState!.validate()) {
+      FireBaseAuthErrorMassage.loadingAlertDialog(context);
       try {
+        Navigator.pop(context);
+        FireBaseAuthErrorMassage.successAlertDialog(context);
         var user = await FirebaseAuth.instance.createUserWithEmailAndPassword(
             email: emailController.text, password: passController.text);
         await FirestoreHelper.addUser(
@@ -187,14 +190,20 @@ class RegisterScreen extends StatelessWidget {
           HomeScreen.routeName,
           (route) => false,
         );
-        FireBaseAuthErrorMassage.alertDialog(context, 'success');
       } on FirebaseAuthException catch (e) {
         if (e.code == 'email-already-in-use') {
-          FireBaseAuthErrorMassage.alertDialog(context, 'email already exist');
+          Navigator.pop(context);
+
+          FireBaseAuthErrorMassage.alertDialog(
+              context, AppLocalizations.of(context)?.emailAlreadyUse ?? "");
         } else {
+          Navigator.pop(context);
+
           FireBaseAuthErrorMassage.alertDialog(context, e.code);
         }
       } catch (e) {
+        Navigator.pop(context);
+
         FireBaseAuthErrorMassage.alertDialog(context, e.toString());
       }
     }

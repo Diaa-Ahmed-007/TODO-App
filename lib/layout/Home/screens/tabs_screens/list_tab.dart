@@ -20,6 +20,7 @@ class ListTab extends StatefulWidget {
 class _ListTabState extends State<ListTab> {
   DateTime focusDate =
       DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+
   @override
   Widget build(BuildContext context) {
     MyAuthProvider provider = Provider.of<MyAuthProvider>(context);
@@ -41,16 +42,7 @@ class _ListTabState extends State<ListTab> {
                   '${AppLocalizations.of(context)!.hello} ${provider.dataBaseUser!.fullName ?? 'user'}',
                   style: Theme.of(context).textTheme.labelLarge,
                 ),
-                actions: [
-                  IconButton(
-                    onPressed: () {
-                      provider.signOut();
-                      Navigator.pushReplacementNamed(
-                          context, LoginScreen.routeName);
-                    },
-                    icon: const Icon(Icons.exit_to_app),
-                  )
-                ],
+                
               ),
             ),
             EasyInfiniteDateTimeLine(
