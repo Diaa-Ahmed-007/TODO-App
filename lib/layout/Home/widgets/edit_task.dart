@@ -11,7 +11,7 @@ import 'package:todo/shared/reusable_componenets/task_text_field.dart';
 class EditTask extends StatelessWidget {
   EditTask({super.key});
   static const String routeName = "editTask";
-  final GlobalKey<FormState> formkey = GlobalKey();
+  // final GlobalKey formkey = GlobalKey<FormState>();
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descController = TextEditingController();
   @override
@@ -32,7 +32,7 @@ class EditTask extends StatelessWidget {
             width: double.infinity,
             child: AppBar(
               automaticallyImplyLeading: false,
-              backgroundColor: Theme.of(context).primaryColor,
+              backgroundColor: Theme.of(context).colorScheme.primary,
               leading: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
@@ -154,22 +154,23 @@ class EditTask extends StatelessWidget {
                             userID: provider.fireBaseUserAuth!.uid,
                             taskID: task.id ?? "",
                             task: TaskModel(
-                              title: titleController.text,
-                              description: descController.text,
-                              date: DateTime(
+                                title: titleController.text,
+                                description: descController.text,
+                                date: DateTime(
+                                        homeProvider.selectedDate!.year,
+                                        homeProvider.selectedDate!.month,
+                                        homeProvider.selectedDate!.day)
+                                    .millisecondsSinceEpoch,
+                                time: DateFormat.jm().format(
+                                  DateTime(
                                       homeProvider.selectedDate!.year,
                                       homeProvider.selectedDate!.month,
-                                      homeProvider.selectedDate!.day)
-                                  .millisecondsSinceEpoch,
-                              time: DateFormat.jm().format(
-                                DateTime(
-                                    homeProvider.selectedDate!.year,
-                                    homeProvider.selectedDate!.month,
-                                    homeProvider.selectedDate!.day,
-                                    homeProvider.selectedTime!.hour,
-                                    homeProvider.selectedTime!.minute),
-                              ),
-                            ));
+                                      homeProvider.selectedDate!.day,
+                                      homeProvider.selectedTime?.hour ??
+                                          DateTime.now().hour,
+                                      homeProvider.selectedTime?.minute ??
+                                          DateTime.now().minute),
+                                )));
 
                         Navigator.pop(context);
                       },

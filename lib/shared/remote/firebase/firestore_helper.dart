@@ -85,6 +85,13 @@ class FirestoreHelper {
       required TaskModel task}) async {
     await getTaskCollection(userID).doc(taskID).update(task.toFirestore());
   }
+  static Stream<List<TaskModel>> historyTask({required String UserID, required int date})async*{
+    Stream<QuerySnapshot<TaskModel>> taskStream =
+        getTaskCollection(UserID).where("date", isLessThan: date).orderBy('date',descending: true).snapshots();
+    Stream<List<TaskModel>> tasks = taskStream
+        .map((event) => event.docs.map((snapshot) => snapshot.data()).toList());
+    yield* tasks;
+  }
 
   static Future<void> getIsDoneValue(
       {required String userID,

@@ -39,12 +39,16 @@ dependencies:
   firebase_core: ^2.25.4
   cloud_firestore: ^4.15.5
   provider: ^6.1.1
-  easy_date_timeline: 1.0.3
+  easy_date_timeline: ^1.0.3
   flutter_slidable: ^3.0.1
   shared_preferences: ^2.2.3
   intl: any
   flutter_localizations:
     sdk: flutter
+  flutter_svg: ^2.0.10+1
+  lottie: ^3.1.2
+  google_fonts: ^6.2.1
+  avatar_glow: ^3.0.1
 
 dev_dependencies:
   flutter_test:

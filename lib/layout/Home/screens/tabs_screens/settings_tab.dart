@@ -33,7 +33,7 @@ class SettingsTab extends StatelessWidget {
           child: AppBar(
             elevation: 0,
             automaticallyImplyLeading: false,
-            backgroundColor: Theme.of(context).primaryColor,
+            backgroundColor: Theme.of(context).colorScheme.primary,
             toolbarHeight: hight * 0.2,
             title: Text(
               AppLocalizations.of(context)!.settings,
@@ -173,7 +173,7 @@ class SettingsTab extends StatelessWidget {
                       Navigator.pushReplacementNamed(
                           context, LoginScreen.routeName);
                     },
-                    child: const Text("Logout"),
+                    child: Text(AppLocalizations.of(context)!.logout),
                   ),
                 ),
               ),

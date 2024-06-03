@@ -3,7 +3,7 @@
     "email":"الايميل",
     "password":"كلمه السر",
     "haveNotAccount":"لا يوجد لديك حساب؟",
-    "register":"انشاء",
+    "register":"انشاء حساب",
     "name":"الاسم",
     "confirmPass":"تأكيد كلمه السر",
     "haveAccount":"لديك حساب بالفعل",
@@ -33,5 +33,9 @@
     "fieldRequired":"هذا الحقل مطلوب",
     "invalidInput":"خطأ بكتابه الحساب",
     "passLength":"لا يمكن ان تقل كلمه السر عن ثمانيه احرف",
-    "notMatch":"غير مطابق لكلمه السر"
+    "notMatch":"غير مطابق لكلمه السر",
+    "history":"السجل",
+    "logout":"تسجيل الخروج",
+    "letsplay":"ابدا اللعب",
+    "gameLobby":"قاعه اللعب"
 }

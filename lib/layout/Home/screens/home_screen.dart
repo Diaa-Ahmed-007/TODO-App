@@ -5,6 +5,7 @@ import 'package:todo/layout/Home/provider/home_provider.dart';
 import 'package:todo/layout/Home/screens/tabs_screens/list_tab.dart';
 import 'package:todo/layout/Home/screens/tabs_screens/settings_tab.dart';
 import 'package:todo/layout/Home/widgets/add_task_sheet.dart';
+import 'package:todo/layout/Home/widgets/home_drawer.dart';
 import 'package:todo/models/task_model.dart';
 import 'package:todo/shared/providers/auth_provider.dart';
 import 'package:todo/shared/remote/firebase/firestore_helper.dart';
@@ -32,6 +33,9 @@ class HomeScreen extends StatelessWidget {
         key: scaffoldKey,
         body: tabsList[homeProvider.currentNavIndex],
       ),
+      drawer: HomeDrawerWidget(
+        itemClick: (item) {},
+      ),
       bottomNavigationBar: BottomAppBar(
         clipBehavior: Clip.hardEdge,
         color: Colors.transparent,
@@ -39,6 +43,7 @@ class HomeScreen extends StatelessWidget {
         shape: const CircularNotchedRectangle(),
         notchMargin: 10,
         child: BottomNavigationBar(
+          enableFeedback: false,
           elevation: 10,
           backgroundColor: Theme.of(context).colorScheme.onPrimary,
           currentIndex: homeProvider.currentNavIndex,
@@ -69,6 +74,7 @@ class HomeScreen extends StatelessWidget {
           ? null
           : homeProvider.visableFloatingActionButton
               ? FloatingActionButton(
+                heroTag: null,
                   onPressed: () async {
                     if (homeProvider.isBottomSheetOpened) {
                       if ((globalKey.currentState?.validate() ?? false) &&

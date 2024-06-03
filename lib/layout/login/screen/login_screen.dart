@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:todo/layout/Home/provider/settings_provider.dart';
 import 'package:todo/layout/Home/screens/home_screen.dart';
 import 'package:todo/layout/login/provider/visability_login_provider.dart';
 import 'package:todo/layout/register/register_screen.dart';
@@ -13,110 +14,158 @@ import 'package:todo/shared/remote/firebase/firestore_helper.dart';
 import 'package:todo/shared/reusable_componenets/custom_Text_Field.dart';
 import 'package:todo/shared/reusable_componenets/custom_sign_in_button.dart';
 
-class LoginScreen extends StatelessWidget {
-  LoginScreen({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
   static const routeName = 'loginScreen';
 
-  final TextEditingController emailController = TextEditingController();
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
 
-  final TextEditingController passController = TextEditingController();
+final TextEditingController emailController = TextEditingController();
 
-  final formstate = GlobalKey<FormState>();
+final TextEditingController passController = TextEditingController();
 
+final formstate = GlobalKey<FormState>();
+
+class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     VisabilityPasswordProvider provider =
         Provider.of<VisabilityPasswordProvider>(context);
-    return Container(
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage('assets/images/SIGN IN pg.jpg'),
-        ),
-      ),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text(
-            AppLocalizations.of(context)!.login,
-            style: const TextStyle(color: Colors.white),
-          ),
-          centerTitle: true,
-        ),
-        body: Form(
-          key: formstate,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CustomTextField(
-                labelWord: AppLocalizations.of(context)!.email,
-                val: (value) {
-                  if (value == null || value.isEmpty) {
-                    
-                    return AppLocalizations.of(context)?.fieldRequired ?? "";
-                  }
-                  if (!RegExp(Constants.regExp).hasMatch(value)) {
-                    return AppLocalizations.of(context)?.invalidInput??"";
-                  }
-                  return null;
-                },
-                controller: emailController,
-                passwordVisible: false,
-              ),
-              CustomTextField(
-                labelWord: AppLocalizations.of(context)!.password,
-                val: (value) {
-                  if (value == null || value.isEmpty) {
-                    return AppLocalizations.of(context)?.fieldRequired ?? "";
-                  }
-                  return null;
-                },
-                controller: passController,
-                passwordVisible: provider.passwordVisible,
-                iconbuttoneye: IconButton(
-                  onPressed: () {
-                    provider.changeVisible(
-                        provider.getLoginPassVisible() ? false : true);
-                  },
-                  icon: VisabilityPasswordProvider().getLoginPassVisible()
-                      ? const Icon(Icons.visibility_off)
-                      : const Icon(Icons.visibility),
+    SettingsProvider settingsProvider = Provider.of<SettingsProvider>(context);
+
+    var hight = MediaQuery.of(context).size.height;
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      body: Form(
+        key: formstate,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              height: hight * 0.4,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xffF5591F),
+                    Color(0xffF56A1F),
+                    Color(0xffF5781F),
+                    Color(0xffF5811F),
+                    Color(0xffF5891F),
+                  ],
+                ),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(
+                      settingsProvider.getLanguage() == 'en' ? 150 : 0),
+                  bottomRight: Radius.circular(
+                      settingsProvider.getLanguage() == 'en' ? 0 : 150),
                 ),
               ),
-              CustomSignInButton(
-                ontap: () {
-                  if (formstate.currentState!.validate()) {
-                    logIn(context);
-                  }
-                },
-                lapel: AppLocalizations.of(context)!.login,
-              ),
-              Row(
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    AppLocalizations.of(context)!.haveNotAccount,
-                    style: const TextStyle(color: Colors.black),
+                  const SizedBox(
+                    height: 50,
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, RegisterScreen.routeName);
-                    },
+                  Align(
+                      alignment: Alignment.center,
+                      child: Image.asset("assets/images/logo1.png")),
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        right: settingsProvider.getLanguage() == 'en' ? 30 : 0,
+                        left: settingsProvider.getLanguage() == 'en' ? 0 : 30,
+                        top: 16),
                     child: Text(
-                      AppLocalizations.of(context)!.register,
-                      style: Theme.of(context)
-                          .textTheme
-                          .displayLarge
-                          ?.copyWith(fontSize: 18),
+                      AppLocalizations.of(context)!.login,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700),
                     ),
-                  )
+                  ),
                 ],
               ),
-            ],
-          ),
+            ),
+            SizedBox(
+              height: hight * 0.15,
+            ),
+            CustomTextField(
+              labelWord: AppLocalizations.of(context)!.email,
+              val: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)?.fieldRequired ?? "";
+                }
+                if (!RegExp(Constants.regExp).hasMatch(value)) {
+                  return AppLocalizations.of(context)?.invalidInput ?? "";
+                }
+                return null;
+              },
+              controller: emailController,
+              passwordVisible: false,
+              preIcon: "assets/images/round-email-24px.svg",
+            ),
+            CustomTextField(
+              labelWord: AppLocalizations.of(context)!.password,
+              val: (value) {
+                if (value == null || value.isEmpty) {
+                  return AppLocalizations.of(context)?.fieldRequired ?? "";
+                }
+                return null;
+              },
+              controller: passController,
+              passwordVisible: provider.passwordVisible,
+              iconbuttoneye: IconButton(
+                onPressed: () {
+                  provider.changeVisible(
+                      provider.getLoginPassVisible() ? false : true);
+                },
+                icon: VisabilityPasswordProvider().getLoginPassVisible()
+                    ? const Icon(Icons.visibility_off)
+                    : const Icon(Icons.visibility),
+              ),
+              preIcon: "assets/images/round-vpn_key-24px.svg",
+            ),
+            CustomSignInButton(
+              ontap: () {
+                if (formstate.currentState!.validate()) {
+                  logIn(context);
+                }
+              },
+              lapel: AppLocalizations.of(context)!.login,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.haveNotAccount,
+                  style: TextStyle(
+                      color: settingsProvider.getThemeMode() == ThemeMode.light
+                          ? Colors.black
+                          : Colors.white),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, RegisterScreen.routeName);
+                  },
+                  child: Text(
+                    AppLocalizations.of(context)!.register,
+                    style: Theme.of(context)
+                        .textTheme
+                        .displayLarge
+                        ?.copyWith(fontSize: 18),
+                  ),
+                )
+              ],
+            ),
+          ],
         ),
       ),
     );

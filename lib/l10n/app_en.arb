@@ -33,5 +33,9 @@
     "fieldRequired":"this field is required",
     "invalidInput":"invalid input",
     "passLength":"password can't be less than 8",
-    "notMatch":"not match"
+    "notMatch":"not match",
+    "history":"History",
+    "logout":"Logout",
+    "letsplay":"Let's play",
+    "gameLobby":"Game Lobby"
 }

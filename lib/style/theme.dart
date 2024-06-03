@@ -3,6 +3,12 @@ import 'package:todo/style/app_color.dart';
 
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
+    elevatedButtonTheme: const ElevatedButtonThemeData(
+        style: ButtonStyle(enableFeedback: false)),
+    iconButtonTheme:
+        const IconButtonThemeData(style: ButtonStyle(enableFeedback: false)),
+    textButtonTheme:
+        const TextButtonThemeData(style: ButtonStyle(enableFeedback: false)),
     useMaterial3: false,
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
         selectedIconTheme: IconThemeData(size: 30),
@@ -14,7 +20,10 @@ class AppTheme {
         secondary: AppColor.scondryLight,
         onPrimary: AppColor.onprimaryLight,
         onSecondary: AppColor.onscondryLight,
-        outline: AppColor.done),
+        outline: AppColor.done,
+        
+                    
+        ),
     textTheme: const TextTheme(
         bodyMedium: TextStyle(
             color: AppColor.onscondryLight,
@@ -57,7 +66,7 @@ class AppTheme {
       onPrimary: AppColor.onPrimaryDark,
       secondary: AppColor.scondryDark,
       onSecondary: AppColor.onscondryDark,
-      outline: AppColor.done,
+      outline: Colors.white,
     ),
     textTheme: const TextTheme(
       labelLarge: TextStyle(

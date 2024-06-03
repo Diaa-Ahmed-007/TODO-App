@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: const [
         Locale('en'), // English
-        Locale('ar'), // Spanish
+        Locale('ar'), // Arabic
       ],
       locale: Locale(provider.getLanguage()),
       debugShowCheckedModeBanner: false,
@@ -56,7 +56,7 @@ class MyApp extends StatelessWidget {
         LoginScreen.routeName: (context) =>
             ChangeNotifierProvider<VisabilityPasswordProvider>(
                 create: (BuildContext context) => VisabilityPasswordProvider(),
-                child: LoginScreen()),
+                child: const LoginScreen()),
         RegisterScreen.routeName: (context) =>
             ChangeNotifierProvider<VisabilityPasswordProvider>(
                 create: (BuildContext context) => VisabilityPasswordProvider(),

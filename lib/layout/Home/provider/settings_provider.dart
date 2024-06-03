@@ -27,12 +27,6 @@ class SettingsProvider extends ChangeNotifier {
 
 //------------------------------------------------------------------------------
 
-  // String selectedLanguage = 'English';
-  // changeSelectedLanguage(String newValue) {
-  //   if (selectedLanguage == newValue) return;
-  //   selectedLanguage = newValue;
-  //   notifyListeners();
-  // }
 
   String selectedLanguage = 'en';
   String getLanguage() {
